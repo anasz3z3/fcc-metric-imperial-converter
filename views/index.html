@@ -1,59 +1,143 @@
 <!DOCTYPE html>
-<html>
+
+<html>  
+  
   <head>
-    <title>Metric/Imperial Converter</title>
-    <meta name="description" content="An example of the Free Code Camp Metric/Imperial Converter Project">
-    <link id="favicon" rel="icon" href="https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png" type="image/x-icon">
+    <title>Metric/Imperial Converter - by Anas Zaza</title>
+    <meta name="description" content="This is a project for freeCodeCamp's Quality Assurance and Testing with Chai + Advanced Node and Express certification">
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="./public/style.css">
-  </head>
-  <body>
-    <header>
-      <h1>Metric/Imperial Converter</h1>
-    </header>
-    <hr style='margin: 50px'>
-    <section>
-      <h3>Example usage</h3>
-      <code>/api/convert?input=4gal</code><br>
-      <code>/api/convert?input=1/2km</code><br>
-      <code>/api/convert?input=5.4/3lbs</code><br>
-      <code>/api/convert?input=kg</code><br>
-      <h3>Example return</h3>
-      <code>{ initNum: 3.1, initUnit: 'mi', returnNum: 4.98895, returnUnit: 'km', string: '3.1 miles converts to 4.98895 kilometers' }</code>
-    </section>
-    <hr style='margin: 50px'>
-    <section>
-      <div id='testui' >
-        <h3 style="text-align: left">Front-End</h3>
-        <form id="convertForm" class="border">
-          <input type="text" id="convertField" name="input" placeholder="3.1mi" style="width: 200px">
-          <input id="convert" type="submit" value='Convert!'>
-        </form>
-        <p id='result'></p>
-        <code id='jsonResult'></code>
-      </div>
-    </section>
-    <!-- Your web-app is https, so your scripts need to be too -->
+    
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" type="text/css" href="/public/style.css">
+    
+    <!-- We'll be using jQuery for handling the form submission, so let's load it in (link/script in HTTPS because our site will be HTTPS): -->
     <script src="https://code.jquery.com/jquery-2.2.1.min.js"
             integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
-            crossorigin="anonymous"></script>
-    <script>
-      $(function() {
-        $('#convertForm').submit(function(event) {
-          event.preventDefault();
-          $.ajax({
-            url: '/api/convert',
-            type: 'get',
-            data: $('#convertForm').serialize(),
-            success: function(data) {
-              $('#result').text(data.string || data);
-              $('#jsonResult').text(JSON.stringify(data));
-            }
+            crossorigin="anonymous">
+    </script>
+    
+  </head>
+  
+  
+  <body>
+    <div class="container">
+      
+      <header>
+        <h1>Metric-Imperial Converter</h1>
+        <h2>(This project is for freeCodeCamp's Quality Assurance and Testing with Chai + Advanced Node and Express certification)</h2>
+      </header>
+      
+      
+      
+      <h3></h3>
+      
+      <p>
+        You can use this API to convert back and forth from:
+        <ul>
+          <li>miles (mi) to kilometers (km),</li>
+          <li>pounds (lbs) to kilograms (kg), and</li>
+          <li>gallons (gal) to liters (L).</li>
+        </ul>
+      </p>
+    
+      
+      <div id="testui">
+
+        <form id="convertForm">
+          <input type="text" id="convertField" name="input" placeholder="3.4/6mi">
+          <input id="convert" type="submit" value="Convert!">
+        </form>
+
+        <!-- We'll be outputting the string-formatted result of the unit conversion to the following paragraph... -->
+        <p id="result"></p>
+        <!-- ... and the JSON formatted result of the unit conversion to the following code block: -->
+        <!-- <code id="jsonResult"></code>         uncommented from original boilerplate to keep the site tidy -->
+        
+        <!-- the script for when the form gets submitted: -->
+        <script>
+          $(function() {
+            $('#convertForm').submit(function(event) {
+              event.preventDefault();    // To stop the page from reloading when the form is submitted.
+              $.ajax({
+                url: '/api/convert',
+                type: 'get',
+                data: $('#convertForm').serialize(),
+                success: function(data) {
+                  let content = data.string || data;  // If the result is one of our "invalid" statements, then there won't be a data.string, and we'll return data only
+                  //$('#result').html('<a href="/api/convert?' + $("#convertForm").serialize() + '">' + content + '</a>');
+                  $('#result').text(data.string || data);
+                  $('#jsonResult').text(JSON.stringify(data));
+                  // Original boilerplate (with .split()/.join() spacing mods in the JSON response), replaced with above because the original was rather messy on screen:
+                  // $('#result').text(data.string || data);
+                  // $('#jsonResult').text(JSON.stringify(data).split(",").join(", ").split(":").join(": ") );
+                }
+              });
+            });
           });
-        });
-      });
-   </script>
+        </script>
+      </div>
+      
+      
+      
+    
+      <h3>Example return</h3>
+      <p>
+        This API will respond to a GET request at <code>/api/convert?input=&ltnumber&gt&ltunit&gt</code> with a JSON object like this example:
+      </p>
+      <pre><code>{
+    initNum: 3.1,
+    initUnit: 'mi',
+    returnNum: 4.98895,
+    returnUnit: 'km',
+    string: '3.1 miles converts to 4.98895 kilometers'
+  }</code></pre>
+    
+      <p>
+        If the submitted quantity is invalid, the API will respond with <code>"invalid number"</code>. If it's the unit that is invalid,
+        the response will be <code>"invalid unit"</code>. If both the quantity and unit are invalid, then the API will respond with <code>"invalid number and unit"</code>.
+      </p>
+      <p>
+        If a unit is submitted without a quantity, the API will assume a quantity of 1 should be converted.
+      </p>
+      
+      
+      
+      <div id="userstories">
+        <h3>User Stories</h3>
+        <ol>
+          <li>I can <b>GET</b> <code>/api/convert</code> with a single parameter containing an accepted number and unit and have it converted.</li>
+          <li>Hint: Split the input by looking for the index of the first character.</li>
+          <li>I can convert 'gal' to 'L' and vice versa. <b>(1 gal to 3.78541 L)</b></li>
+          <li>I can convert 'lbs' to 'kg' and vice versa. <b>(1 lbs to 0.453592 kg)</b></li> 
+          <li>I can convert 'mi' to 'km' and vice versa. <b>(1 mi to 1.60934 km)</b></li>
+          <li>All incoming units should be accepted in both upper and lower case, but should be returned in both the <code>initUnit</code> and <code>returnUnit</code> in lower case, except for liter, which should be represented as an uppercase <code>'L'</code>.</li>
+          <li>If the unit of measurement is invalid, returned will be 'invalid unit'.</li>
+          <li>If the number is invalid, returned with will 'invalid number'.</li>
+          <li>If both are invalid, return will be 'invalid number and unit'.</li>
+          <li>I can use fractions, decimals or both in my parameter(ie. 5, 1/2, 2.5/6), but if nothing is provided it will default to 1.</li>
+          <li>My return will consist of the initNum, initUnit, returnNum, returnUnit, and string spelling out units in format <code>{initNum} {initial_Units} converts to {returnNum} {return_Units}</code> with the result rounded to 5 decimals.</li>
+          <li>All 16 unit tests are complete and passing.</li>
+          <li>All 5 functional tests are complete and passing.</li>
+        </ol>
+      </div>
+    
+    </div>  <!-- END of container -->
+  
+    
+    
+    <footer>
+      designed by <a href="http://www.joolian.com" target="_blank">Julian NF</a> for freeCodeCamp's 
+      <a href="https://learn.freecodecamp.org/information-security-and-quality-assurance/information-security-and-quality-assurance-projects/metric-imperial-converter/" 
+         target="_blank" title="Visit the project page">Quality Assurance and Testing - Metric-Imperial Converter Project</a> 
+      and built upon the <a href="https://github.com/freeCodeCamp/boilerplate-project-metricimpconverter/" target="_blank" title="Project boilerplate on GitHub">
+      project-specific boilerplate code</a> using JavaScript, <a href="https://nodejs.org/" title="Learn more about Node.js">Node.js</a>, 
+      <a href="https://expressjs.com/" target="_blank" title="Learn more about Express.js">Express.js</a>, 
+      <a href="https://www.chaijs.com/" target="_blank" title="Learn more about Chai.js">Chai.js</a>, 
+      <a href="https://helmetjs.github.io/" target="_blank" title="Learn more about Helmet.js">Helmet.js</a>, 
+      <a href="https://mathjs.org/" target="_blank" title="Learn more about Math.js">Math.js</a>, and a pinch of CSS.
+    </footer> 
+    
+    
   </body>
 </html>
